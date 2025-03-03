@@ -1,4 +1,3 @@
-
 //Write a program to calculate even and odd parity at sender and receiver sides
 
 #include<iostream>
@@ -6,10 +5,11 @@
 #include<string.h>
 
 using namespace std;
+#define MAXSIZE 20
 
-char sender(char a, char b[])
+char sender(char a, char b[], int n)
 {	
-	int i, n= 10, ones=0;
+	int i,ones=0;
 	
 	for(i=0; i<n; i++)
 	{
@@ -46,28 +46,66 @@ char sender(char a, char b[])
 	
 }
 
+void receiver(char a, char b[], int n)
+{	
+	int i,ones=0;
+	
+	for(i=0; i<n; i++)
+	{
+		if(b[i]=='1')
+			ones++;
+
+	}
+	if(a=='0')
+	{
+		if(ones%2==0)
+		{
+			cout<<"There was no error.\n";
+		}
+		else 
+		{
+			cout<<"There was an error in the received data.\n";
+		}
+	}
+	else
+	{
+		if(ones%2==0)
+		{
+			cout<<"There was an error in the received data.\n";
+		}
+		else 
+		{
+			cout<<"There was no error.\n";
+		}
+	}
+	
+}
 int main()
 {	
- 	int n;
- 	char parity,type, mx[n], tx[20];	//dynamic array size make 
+	int i=0, data_num=0;
+ 	char parity, type, mx[MAXSIZE], tx[MAXSIZE+1];	//dynamic array size make 
  	
- 	cout<<"Enter the no. of digits in the data:\n";
- 	cin>>n;
-	cout<<"Enter the data to be transmitted :M(x) = ";
+	cout<<"Enter the data to be transmitted :M(x) = \n";
 	cin>>mx;
+	
+	while(mx[i]!='\0')
+	{
+		data_num++;
+		i++;
+	}
 	label:
-	cout<<"Choose the parity type:\nEven Parity\nOdd Parity\n";
-	cout<<"Press 0 or 1 \n";
+	cout<<"\nChoose the parity type:\nEven Parity\nOdd Parity\n";
+	cout<<"\t\tPress 0 or 1 \n";
 	type= getch();
 	switch(type)
 	{
 		case '0':
-			cout<<"Using Even Parity::";
-			parity = sender(type,mx);
+			cout<<"\nUsing Even Parity::";
+			parity = sender(type,mx,data_num);
 			break;
 		case '1':
 			cout<<"Using Odd Parity::";
-			parity = sender(type,mx);
+			parity = sender(type,mx,data_num);
 			break;
 		default:
 			cout<<"Invalid input. Try again";
@@ -75,10 +113,34 @@ int main()
 			goto label;
 			exit(1);
 	}
-	tx=mx+parity;
-	cout<<mx;
-	cout<<endl<<mx<<endl;
 	
+	strcpy(tx, mx);
+	tx[data_num] = parity;
+	tx[data_num+1] = '\0';
+
+	cout<<endl<<mx<<" is transmitted as "<<tx<<endl;
+	
+	//checking the parity for the received data 
+	cout<<"\nEnter the data received:";
+	cin>>mx;
+
+	i=0;
+	while(mx[i]!='\0')
+	{
+		data_num++;
+		i++;
+	}
+	cout<<"\n\nEnter 0: Even Parity \n 1:Odd Parity \nfor the parity received"<<endl;
+	type= getch();
+	switch(type)
+	{
+		case '0':
+			receiver(type, mx, data_num);
+			break;
+		case '1':
+			receiver(type, mx, data_num);
+			break;
+	}
 	return 0;
 	
 }
